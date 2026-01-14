@@ -8,8 +8,6 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  /* Map Tailwind's font-sans to Poppins (optional but clean) */
   --font-sans: var(--font-poppins);
 }
 
