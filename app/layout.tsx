@@ -11,8 +11,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "App",
-  description: "App",
+  title: "Dashboard",
+  description: "Dashboard",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
         <Sidebar />
         <div className="flex-1 flex flex-col bg-[#FAFBFF]">
           <Header />
-          <main className="p-4 flex-1">{children}</main>
+          <main className=" flex-1">{children}</main>
         </div>
       </body>
     </html>
