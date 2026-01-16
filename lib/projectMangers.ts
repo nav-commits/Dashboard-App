@@ -1,4 +1,4 @@
-type ProjectManager = {
+export type ProjectManager = {
     id: number;
     name: string;
     title: string;
@@ -16,12 +16,12 @@ type ProjectManager = {
       id: 2,
       name: "Bob Smith",
       title: "Project Manager",
-      avatar: "https://i.pravatar.cc/100?img=2",
+      avatar: "/Images/evano.png",
     },
     {
       id: 3,
       name: "Charlie Lee",
       title: "Project Manager",
-      avatar: "https://i.pravatar.cc/100?img=3",
+      avatar: "/Images/evano.png",
     },
   ];
