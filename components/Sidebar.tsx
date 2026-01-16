@@ -12,7 +12,6 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [selected] = useState(projectManagers[0]);
   const [open, setOpen] = useState(false);
-
   return (
     <aside
       className={clsx(
