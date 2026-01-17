@@ -32,20 +32,37 @@ export default function Customers() {
               {/* Text */}
               <div className="flex-1">
                 <p className="text-sm text-[#ACACAC]">{stat.label}</p>
-
                 {/* Number */}
                 {stat.number && (
                   <p className="font-semibold text-2xl mb-1">{stat.number}</p>
                 )}
                 {stat.growth && (
-                  <div className="flex items-center gap-1 text-sm font-semibold">
+                  <div
+                    className={`flex items-center gap-1 text-sm font-semibold ${
+                      stat.growthType === "up"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
                     {stat.growthType === "up" ? (
-                      <span className="text-green-500">⬆</span>
+                      <Image
+                        src={"icons/arrow-up.svg"}
+                        alt={`${stat.label} icon`}
+                        width={24}
+                        height={24}
+                      />
                     ) : (
-                      <span className="text-red-500">⬇</span>
+                      <Image
+                        src={"icons/arrow-down.svg"}
+                        alt={`${stat.label} icon`}
+                        width={24}
+                        height={24}
+                      />
                     )}
-                    <span className="text-[#00AC4F]">{stat.growth}</span>
-                    <span className="text-gray-500">this month</span>
+                    <span>{stat.growth}</span>
+                    <span className="text-black font-normal">
+                      this month
+                    </span>
                   </div>
                 )}
                 {stat.images && (

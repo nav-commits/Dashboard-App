@@ -128,11 +128,13 @@ export interface Customer {
       id: 3,
       icon: "/Icons/desktop.svg",
       label: "Active Now",
+      number: "189",
       images: [
-        "/customers/customer1.jpg",
-        "/customers/customer2.jpg",
-        "/customers/customer3.jpg",
-        "/customers/customer4.jpg",
+        "/images/person-1.png",
+        "/images/person-2.png",
+        "/images/person-3.png",
+        "/images/person-4.png",
+        "/images/person-5.png",
       ],
     },
   ];
