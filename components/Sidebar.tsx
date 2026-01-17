@@ -34,9 +34,7 @@ export default function Sidebar() {
     >
       {/* Top section */}
       <div>
-        {/* Logo */}
         <div className="flex justify-center lg:justify-start mb-6">
-          {/* Desktop logo */}
           <Image
             src="/images/logo.png"
             alt="Company logo"
@@ -45,7 +43,6 @@ export default function Sidebar() {
             className="hidden lg:block object-contain"
             priority
           />
-          {/* Collapsed logo */}
           <Image
             src="/images/logo-2.png"
             alt="Company logo"
@@ -84,10 +81,8 @@ export default function Sidebar() {
                           isActive && "filter brightness-0 invert"
                         )}
                       />
-                      {/* Text only on desktop */}
                       <span className="hidden lg:inline">{link.name}</span>
                     </div>
-                    {/* Arrow only on desktop */}
                     {link.hasArrow && (
                       <Image
                         src="/icons/chevron-right.svg"
@@ -112,7 +107,7 @@ export default function Sidebar() {
       <div>
         {/* Desktop only */}
         <div className="hidden lg:block">
-          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9]">
+          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9] p-6 mt-6 mb-6">
             <p className="text-center text-sm text-white font-semibold p-2">
               Upgrade to PRO to get access to all features!
             </p>
@@ -130,7 +125,7 @@ export default function Sidebar() {
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center justify-between w-full p-2 rounded hover:bg-gray-100 transition"
+        className="flex items-center justify-between w-full p-2 rounded hover:bg-gray-100 transition cursor-pointer"
       >
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 relative rounded-full overflow-hidden">
@@ -160,7 +155,6 @@ export default function Sidebar() {
           />
         </div>
       </button>
-
       {/* DROPDOWN CARD */}
       {open && (
         <div
@@ -176,7 +170,7 @@ export default function Sidebar() {
                 setOpen(false);
               }}
               className={clsx(
-                "flex items-center w-full px-3 py-2 space-x-3 hover:bg-gray-100 transition text-left",
+                "flex items-center w-full px-3 py-2 space-x-3 hover:bg-gray-100 transition text-left cursor-pointer",
                 selected.id === manager.id && "bg-gray-50"
               )}
             >
