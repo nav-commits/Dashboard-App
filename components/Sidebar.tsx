@@ -107,7 +107,7 @@ export default function Sidebar() {
       <div>
         {/* Desktop only */}
         <div className="hidden lg:block">
-          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9]">
+          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9] p-6 mt-6 mb-6">
             <p className="text-center text-sm text-white font-semibold p-2">
               Upgrade to PRO to get access to all features!
             </p>
