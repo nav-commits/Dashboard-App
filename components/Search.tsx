@@ -1,10 +1,19 @@
-"use client";
-import { useState } from "react";
+
 import Image from "next/image";
-const Search = () => {
-const [query, setQuery] = useState("");
+type SearchProps = {
+  value: string;
+  onChange: (value: string) => void;
+  bgClass?: string;
+};
+const Search = ({
+  value,
+  onChange,
+  bgClass = "bg-white",
+}: SearchProps) => {
   return (
-    <div className="flex items-center bg-white rounded-md px-3 py-2">
+    <div
+      className={`flex items-center rounded-md px-3 py-2 ${bgClass}`}
+    >
       <label htmlFor="dashboard-search" className="sr-only">
         Search dashboard
       </label>
@@ -20,8 +29,8 @@ const [query, setQuery] = useState("");
         id="dashboard-search"
         type="search"
         placeholder="Search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="flex-1 text-gray-700 placeholder-gray-400 focus:outline-none bg-transparent"
       />
     </div>

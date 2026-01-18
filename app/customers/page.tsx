@@ -1,13 +1,25 @@
+"use client";
+
+import { useState } from "react";
 import Card from "@/components/Card";
 import Image from "next/image";
+import Search from "@/components/Search";
+import Dropdown from "@/components/Dropdown";
 import { customerStats } from "@/lib/customers";
+import { statusOptions } from "@/lib/status";
 
 export default function Customers() {
+  const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
+    "active"
+  );
+  // State for search input
+  const [searchQuery, setSearchQuery] = useState("");
   return (
     <main className="p-6">
+      {/* Customer Stats */}
       <Card
         bgClass="bg-white"
-        className="m-3 p-6"
+        className="m-3 p-6 shadow-xs"
         aria-label="Customer statistics"
       >
         <div className="flex flex-col lg:flex-row">
@@ -21,12 +33,10 @@ export default function Customers() {
                 gap-3
                 px-4 py-4
                 text-center sm:text-left
-
                 border-t border-gray-200
                 lg:border-t-0 lg:border-r lg:last:border-r-0
               "
             >
-              {/* Icon */}
               <div className="flex-shrink-0">
                 <Image
                   src={stat.icon}
@@ -36,18 +46,13 @@ export default function Customers() {
                 />
               </div>
 
-              {/* Text */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#ACACAC]">
-                  {stat.label}
-                </p>
-
+                <p className="text-sm text-[#ACACAC]">{stat.label}</p>
                 {stat.number && (
                   <p className="font-semibold text-2xl mb-1 break-words">
                     {stat.number}
                   </p>
                 )}
-
                 {stat.growth && (
                   <div
                     className={`flex flex-wrap items-center justify-center sm:justify-start gap-1 text-sm font-semibold ${
@@ -59,20 +64,17 @@ export default function Customers() {
                     <Image
                       src={
                         stat.growthType === "up"
-                          ? "icons/arrow-up.svg"
-                          : "icons/arrow-down.svg"
+                          ? "/icons/arrow-up.svg"
+                          : "/icons/arrow-down.svg"
                       }
                       alt="growth icon"
                       width={20}
                       height={20}
                     />
                     <span>{stat.growth}</span>
-                    <span className="text-black font-normal">
-                      this month
-                    </span>
+                    <span className="text-black font-normal">this month</span>
                   </div>
                 )}
-
                 {stat.images && (
                   <div className="flex justify-center sm:justify-start mt-2 -space-x-3">
                     {stat.images.map((img, idx) => (
@@ -90,6 +92,33 @@ export default function Customers() {
               </div>
             </div>
           ))}
+        </div>
+      </Card>
+      {/* Search + Status Filter */}
+      <Card className="m-3 p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold">All Customers</h2>
+            <h3 className="text-md text-[#16C098]">Active Members</h3>
+          </div>
+          <div className="flex gap-3 items-center w-full sm:w-auto">
+            <Search
+              value={searchQuery}
+              onChange={(val) => {
+                setSearchQuery(val);
+                console.log("Search input:", val);
+              }}
+              bgClass="bg-gray-100"
+            />
+            <Dropdown
+              placeholder="Short by:"
+              items={statusOptions}
+              initialSelectedId={filteredStatus}
+              onSelect={(item) =>
+                setFilteredStatus(item.id as "active" | "inactive")
+              }
+            />
+          </div>
         </div>
       </Card>
     </main>

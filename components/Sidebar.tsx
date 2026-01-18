@@ -3,27 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
 import { sidebarLinks } from "@/lib/sidebarLinks";
 import Card from "./Card";
 import { projectManagers } from "@/lib/projectMangers";
+import Dropdown from "./Dropdown";
 export default function Sidebar() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(projectManagers[0]);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    } 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <aside
       className={clsx(
@@ -118,86 +103,18 @@ export default function Sidebar() {
               Get Pro Now
             </button>
           </Card>
-          <div className="relative w-64 mt-8" ref={dropdownRef}>
-      {/* BUTTON */}
-      <button
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center justify-between w-full p-2 rounded hover:bg-gray-100 transition cursor-pointer"
-      >
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 relative rounded-full overflow-hidden">
-            <Image
-              src={selected.avatar}
-              alt={`${selected.name} avatar`}
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-medium">{selected.name}</p>
-            <p className="text-xs text-gray-500">{selected.title}</p>
-          </div>
-        </div>
-        <div
-          className={clsx(
-            "w-4 h-4 relative transition-transform",
-            open && "rotate-180"
-          )}
-        >
-          <Image
-            src="/icons/chevron-down.svg"
-            alt="arrow-down"
-            fill
-            className="object-contain"
+          <Dropdown
+            items={projectManagers}
+            initialSelectedId={projectManagers[0].id}
+            onSelect={(item) => console.log("Selected PM:", item)}
           />
-        </div>
-      </button>
-      {/* DROPDOWN CARD */}
-      {open && (
-        <div
-          role="listbox"
-          className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-lg"
-        >
-          {projectManagers.map((manager) => (
-            <button
-              key={manager.id}
-              type="button"
-              onClick={() => {
-                setSelected(manager);
-                setOpen(false);
-              }}
-              className={clsx(
-                "flex items-center w-full px-3 py-2 space-x-3 hover:bg-gray-100 transition text-left cursor-pointer",
-                selected.id === manager.id && "bg-gray-50"
-              )}
-            >
-              <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                <Image
-                  src={manager.avatar}
-                  alt={`${manager.name} avatar`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <p className="text-sm font-medium">{manager.name}</p>
-                <p className="text-xs text-gray-500">{manager.title}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
         </div>
         {/* Mobile / Tablet → avatar only */}
         <div className="flex justify-center lg:hidden mt-4">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">
             <Image
-              src={selected.avatar}
-              alt={`${selected.name} avatar`}
+              src={"/public/Images/evano.png"}
+              alt={`avatar`}
               fill
               className="object-cover"
             />
