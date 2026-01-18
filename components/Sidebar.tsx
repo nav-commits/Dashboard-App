@@ -113,7 +113,7 @@ export default function Sidebar() {
         <div className="flex justify-center lg:hidden mt-4">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">
             <Image
-              src={"/public/Images/evano.png"}
+              src={"/Images/evano.png"}
               alt={`avatar`}
               fill
               className="object-cover"

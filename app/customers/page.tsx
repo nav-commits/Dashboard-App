@@ -5,15 +5,15 @@ import Card from "@/components/Card";
 import Image from "next/image";
 import Search from "@/components/Search";
 import Dropdown from "@/components/Dropdown";
-import { customerStats } from "@/lib/customers";
+import { customerStats, customers } from "@/lib/customers";
 import { statusOptions } from "@/lib/status";
 
 export default function Customers() {
   const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
     "active"
   );
-  // State for search input
   const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <main className="p-6">
       {/* Customer Stats */}
@@ -26,16 +26,7 @@ export default function Customers() {
           {customerStats.map((stat) => (
             <div
               key={stat.id}
-              className="
-                flex-1
-                flex flex-col sm:flex-row
-                items-center sm:items-start
-                gap-3
-                px-4 py-4
-                text-center sm:text-left
-                border-t border-gray-200
-                lg:border-t-0 lg:border-r lg:last:border-r-0
-              "
+              className="flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-3 px-4 py-4 text-center sm:text-left border-t border-gray-200 lg:border-t-0 lg:border-r lg:last:border-r-0"
             >
               <div className="flex-shrink-0">
                 <Image
@@ -45,7 +36,6 @@ export default function Customers() {
                   height={84}
                 />
               </div>
-
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#ACACAC]">{stat.label}</p>
                 {stat.number && (
@@ -94,9 +84,10 @@ export default function Customers() {
           ))}
         </div>
       </Card>
-      {/* Search + Status Filter */}
+
+      {/* Search + Status Filter + Table */}
       <Card className="m-3 p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h2 className="text-2xl font-semibold">All Customers</h2>
             <h3 className="text-md text-[#16C098]">Active Members</h3>
@@ -104,14 +95,11 @@ export default function Customers() {
           <div className="flex gap-3 items-center w-full sm:w-auto">
             <Search
               value={searchQuery}
-              onChange={(val) => {
-                setSearchQuery(val);
-                console.log("Search input:", val);
-              }}
+              onChange={(val) => setSearchQuery(val)}
               bgClass="bg-gray-100"
             />
             <Dropdown
-              placeholder="Short by:"
+              placeholder="Sort by:"
               items={statusOptions}
               initialSelectedId={filteredStatus}
               onSelect={(item) =>
@@ -119,6 +107,67 @@ export default function Customers() {
               }
             />
           </div>
+        </div>
+
+        {/* Tailwind Table - Responsive Version */}
+        <div className="overflow-x-auto mt-4">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
+                  Customer Name
+                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm  text-[#B5B7C0]">
+                  Company
+                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
+                  Email
+                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
+                  Phone Number
+                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
+                  Country
+                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {customers.map((customer) => (
+                <tr
+                  key={customer.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
+                    {customer.name}
+                  </td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
+                    {customer.company}
+                  </td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
+                    {customer.email}
+                  </td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
+                    {customer.phone}
+                  </td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
+                    {customer.country}
+                  </td>
+                  <td
+                    className={`px-4 sm:px-6 py-3 text-sm sm:text-base font-medium  whitespace-nowrap ${
+                      customer.status === "active"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {customer.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Card>
     </main>
