@@ -9,19 +9,31 @@ import { customerStats, customers } from "@/lib/customers";
 import { statusOptions } from "@/lib/status";
 
 export default function Customers() {
-  const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
-    "active"
-  );
+  const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">("active");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(customers.length / itemsPerPage);
+
+  // Get current page items
+  const currentItems = customers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
 
   return (
     <main className="p-6">
       {/* Customer Stats */}
-      <Card
-        bgClass="bg-white"
-        className="m-3 p-6 shadow-xs"
-        aria-label="Customer statistics"
-      >
+      <Card bgClass="bg-white" className="m-3 p-6 shadow-xs" aria-label="Customer statistics">
         <div className="flex flex-col lg:flex-row">
           {customerStats.map((stat) => (
             <div
@@ -29,34 +41,19 @@ export default function Customers() {
               className="flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-3 px-4 py-4 text-center sm:text-left border-t border-gray-200 lg:border-t-0 lg:border-r lg:last:border-r-0"
             >
               <div className="flex-shrink-0">
-                <Image
-                  src={stat.icon}
-                  alt={`${stat.label} icon`}
-                  width={84}
-                  height={84}
-                />
+                <Image src={stat.icon} alt={`${stat.label} icon`} width={84} height={84} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#ACACAC]">{stat.label}</p>
-                {stat.number && (
-                  <p className="font-semibold text-2xl mb-1 break-words">
-                    {stat.number}
-                  </p>
-                )}
+                {stat.number && <p className="font-semibold text-2xl mb-1 break-words">{stat.number}</p>}
                 {stat.growth && (
                   <div
                     className={`flex flex-wrap items-center justify-center sm:justify-start gap-1 text-sm font-semibold ${
-                      stat.growthType === "up"
-                        ? "text-green-500"
-                        : "text-red-500"
+                      stat.growthType === "up" ? "text-green-500" : "text-red-500"
                     }`}
                   >
                     <Image
-                      src={
-                        stat.growthType === "up"
-                          ? "/icons/arrow-up.svg"
-                          : "/icons/arrow-down.svg"
-                      }
+                      src={stat.growthType === "up" ? "/icons/arrow-up.svg" : "/icons/arrow-down.svg"}
                       alt="growth icon"
                       width={20}
                       height={20}
@@ -84,8 +81,6 @@ export default function Customers() {
           ))}
         </div>
       </Card>
-
-      {/* Search + Status Filter + Table */}
       <Card className="m-3 p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
@@ -93,73 +88,39 @@ export default function Customers() {
             <h3 className="text-md text-[#16C098]">Active Members</h3>
           </div>
           <div className="flex gap-3 items-center w-full sm:w-auto">
-            <Search
-              value={searchQuery}
-              onChange={(val) => setSearchQuery(val)}
-              bgClass="bg-gray-100"
-            />
+            <Search value={searchQuery} onChange={(val) => setSearchQuery(val)} bgClass="bg-gray-100" />
             <Dropdown
               placeholder="Sort by:"
               items={statusOptions}
               initialSelectedId={filteredStatus}
-              onSelect={(item) =>
-                setFilteredStatus(item.id as "active" | "inactive")
-              }
+              onSelect={(item) => setFilteredStatus(item.id as "active" | "inactive")}
             />
           </div>
         </div>
-
-        {/* Tailwind Table - Responsive Version */}
+        {/* Table */}
         <div className="overflow-x-auto mt-4">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
-                  Customer Name
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm  text-[#B5B7C0]">
-                  Company
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
-                  Email
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
-                  Phone Number
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
-                  Country
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium sm:text-sm text-[#B5B7C0]">
-                  Status
-                </th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Customer Name</th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Company</th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Email</th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Phone Number</th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Country</th>
+                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">Status</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {customers.map((customer) => (
-                <tr
-                  key={customer.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
-                    {customer.name}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
-                    {customer.company}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
-                    {customer.email}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
-                    {customer.phone}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm sm:text-base whitespace-nowrap">
-                    {customer.country}
-                  </td>
+              {currentItems.map((customer) => (
+                <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">{customer.name}</td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">{customer.company}</td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">{customer.email}</td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">{customer.phone}</td>
+                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">{customer.country}</td>
                   <td
-                    className={`px-4 sm:px-6 py-3 text-sm sm:text-base font-medium  whitespace-nowrap ${
-                      customer.status === "active"
-                        ? "text-green-500"
-                        : "text-red-500"
+                    className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap ${
+                      customer.status === "active" ? "text-green-500" : "text-red-500"
                     }`}
                   >
                     {customer.status}
@@ -168,6 +129,75 @@ export default function Customers() {
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Pagination */}
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+          <div className="flex flex-1 justify-between sm:hidden">
+            <button
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-700">
+              Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
+              <span className="font-medium">{Math.min(currentPage * itemsPerPage, customers.length)}</span> of{" "}
+              <span className="font-medium">{customers.length}</span> results
+            </p>
+            <nav aria-label="Pagination" className="isolate inline-flex -space-x-px rounded-md shadow-xs">
+              <button
+                onClick={handlePrev}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 hover:bg-gray-50 disabled:opacity-50"
+              >
+                <span className="sr-only">Previous</span>
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+                  <path
+                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                  />
+                </svg>
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "z-10 bg-indigo-600 text-white"
+                      : "text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 hover:bg-gray-50 disabled:opacity-50"
+              >
+                <span className="sr-only">Next</span>
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+                  <path
+                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </nav>
+          </div>
         </div>
       </Card>
     </main>
