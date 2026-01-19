@@ -1,10 +1,4 @@
-export type ProjectManager = {
-    id: number;
-    name: string;
-    title: string;
-    avatar: string;
-  };
-  
+import { ProjectManager } from "@/types/projectManger";
   export const projectManagers: ProjectManager[] = [
     {
       id: 1,

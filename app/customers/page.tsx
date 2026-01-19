@@ -5,11 +5,11 @@ import Card from "@/components/Card";
 import Image from "next/image";
 import Search from "@/components/Search";
 import Dropdown from "@/components/Dropdown";
-import { CustomerStat } from "@/lib/customers";
+import { CustomerStat } from "@/types/customerStat";
 import { statusOptions } from "@/lib/status";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Customer } from "@/lib/customers";
+import { Customer } from "@/types/customers";
 export default function Customers() {
   const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
     "active"
@@ -205,7 +205,6 @@ export default function Customers() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {/* Combined loading, error, empty states */}
               {customersLoading ||
               customersError ||
               (!customersLoading && currentItems.length === 0) ? (

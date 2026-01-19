@@ -1,11 +1,6 @@
 
-export type SidebarLink = {
-    name: string;
-    href: string;
-    icon: string;
-    hasArrow: boolean;
-  };
-  
+import { SidebarLink } from "@/types/sidebarLinks";
+ 
   export const sidebarLinks: SidebarLink[] = [
     { name: "Dashboard", href: "/", icon: "/icons/key-square.svg", hasArrow: false },
     { name: "Product", href: "/product", icon: "/icons/3d-square.svg", hasArrow: true },
