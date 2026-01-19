@@ -97,7 +97,7 @@ export interface Customer {
   
   // Type for dashboard card stats
   export interface CustomerStat {
-    id: number;
+    id: string;
     icon: string;
     label: string;
     number?: string;
@@ -109,7 +109,7 @@ export interface Customer {
   // Mock data for dashboard cards
   export const customerStats: CustomerStat[] = [
     {
-      id: 1,
+      id: "1",
       icon: "/Icons/user-profile.svg",
       label: "Total Customers",
       number: "5,423",
@@ -117,7 +117,7 @@ export interface Customer {
       growthType: "up",
     },
     {
-      id: 2,
+      id: "2",
       icon: "/Icons/single-user.svg",
       label: "Members",
       number: "3,210",
@@ -125,7 +125,7 @@ export interface Customer {
       growthType: "down",
     },
     {
-      id: 3,
+      id: "3",
       icon: "/Icons/desktop.svg",
       label: "Active Now",
       number: "189",

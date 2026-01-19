@@ -17,6 +17,7 @@ interface DropdownProps {
   items: DropdownItem[];
   onSelect?: (item: DropdownItem) => void;
   initialSelectedId?: string | number;
+  bgClass?: string;
 }
 
 export default function Dropdown({
@@ -24,6 +25,7 @@ export default function Dropdown({
   placeholder,
   onSelect,
   initialSelectedId,
+  bgClass,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<DropdownItem>(
@@ -50,14 +52,17 @@ export default function Dropdown({
   };
 
   return (
-    <div className="relative  mt-4" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       {/* BUTTON */}
       <button
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center justify-between w-full p-2 rounded hover:bg-gray-100 transition cursor-pointer"
+        className={clsx(
+          "flex items-center justify-between w-full p-2 rounded hover:bg-gray-100 transition cursor-pointer",
+          bgClass 
+        )}
       >
         <div className="flex items-center space-x-3">
           {selected.avatar && (
@@ -70,7 +75,9 @@ export default function Dropdown({
               />
             </div>
           )}
-          {placeholder && <p className="text-sm text-[#7E7E7E]">{placeholder}</p>}
+          {placeholder && (
+            <p className="text-sm text-[#7E7E7E]">{placeholder}</p>
+          )}
           <div className="text-left">
             <p className="text-sm font-medium">
               {selected.name || selected.value}
