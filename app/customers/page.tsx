@@ -43,12 +43,14 @@ export default function Customers() {
     const fetchStats = async () => {
       try {
         setStatsLoading(true);
-        const snapshot = await getDocs(collection(db, "customerStats"));
+        const snapshot = await getDocs(collection(db, "customerStats")); 
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as CustomerStat[];
-        setCustomerStats(data);
+        const order = ["Total Customers", "Members", "Active Now"];
+        const sortedData = order.map((label) => data.find((stat) => stat.label === label)!); 
+        setCustomerStats(sortedData);
       } catch (err) {
         console.error("Error fetching customer stats:", err);
         setStatsError("Failed to load stats.");
@@ -58,18 +60,16 @@ export default function Customers() {
     };
     fetchStats();
   }, []);
-
+  
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         setCustomersLoading(true);
         const snapshot = await getDocs(collection(db, "customers"));
-
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Customer[];
-
         setCustomers(data);
       } catch (err) {
         console.error(err);
