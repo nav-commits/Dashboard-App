@@ -9,8 +9,7 @@ import { CustomerStat } from "@/lib/customers";
 import { statusOptions } from "@/lib/status";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { customers } from "@/lib/customers";
-
+import { Customer } from "@/lib/customers";
 export default function Customers() {
   const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
     "active"
@@ -20,6 +19,9 @@ export default function Customers() {
   const [customerStats, setCustomerStats] = useState<CustomerStat[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customersLoading, setCustomersLoading] = useState(true);
+  const [customersError, setCustomersError] = useState<string | null>(null);
   const itemsPerPage = 8;
   const totalPages = Math.ceil(customers.length / itemsPerPage);
 
@@ -55,6 +57,29 @@ export default function Customers() {
       }
     };
     fetchStats();
+  }, []);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setCustomersLoading(true);
+        const snapshot = await getDocs(collection(db, "customers"));
+
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Customer[];
+
+        setCustomers(data);
+      } catch (err) {
+        console.error(err);
+        setCustomersError("Failed to load customers");
+      } finally {
+        setCustomersLoading(false);
+      }
+    };
+
+    fetchCustomers();
   }, []);
   return (
     <main className="p-6">
@@ -161,61 +186,77 @@ export default function Customers() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Customer Name
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Company
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Email
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Phone Number
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Country
-                </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]">
-                  Status
-                </th>
+                {[
+                  "Customer Name",
+                  "Company",
+                  "Email",
+                  "Phone Number",
+                  "Country",
+                  "Status",
+                ].map((col) => (
+                  <th
+                    key={col}
+                    scope="col"
+                    className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]"
+                  >
+                    {col}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentItems.map((customer) => (
-                <tr
-                  key={customer.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
-                    {customer.name}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
-                    {customer.company}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
-                    {customer.email}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
-                    {customer.phone}
-                  </td>
-                  <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
-                    {customer.country}
-                  </td>
-                  <td className=" sm:px-6 text-sm font-medium whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 rounded-md ${
-                        customer.status === "active"
-                          ? "text-[#008767] bg-[#16C098]"
-                          : "text-red-500 bg-red-100"
-                      }`}
-                    >
-                      {customer.status.charAt(0).toUpperCase() +
-                        customer.status.slice(1)}
-                    </span>
+              {/* Combined loading, error, empty states */}
+              {customersLoading ||
+              customersError ||
+              (!customersLoading && currentItems.length === 0) ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-8 text-center text-sm text-gray-400"
+                  >
+                    {customersLoading
+                      ? "Loading customers..."
+                      : customersError
+                      ? customersError
+                      : "No customers found"}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                currentItems.map((customer) => (
+                  <tr
+                    key={customer.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-4 sm:px-6 py-6 font-medium text-sm whitespace-nowrap">
+                      {customer.name}
+                    </td>
+                    <td className="px-4 sm:px-6 py-6 text-sm whitespace-nowrap">
+                      {customer.company}
+                    </td>
+                    <td className="px-4 sm:px-6 py-6 text-sm whitespace-nowrap">
+                      {customer.email}
+                    </td>
+                    <td className="px-4 sm:px-6 py-6 text-sm whitespace-nowrap">
+                      {customer.phone}
+                    </td>
+                    <td className="px-4 sm:px-6 py-6 text-sm whitespace-nowrap">
+                      {customer.country}
+                    </td>
+                    <td className="px-4 sm:px-6 py-6 text-sm whitespace-nowrap">
+                      <span
+                        className={`px-3 py-1 rounded-md text-xs font-semibold ${
+                          customer.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-600"
+                        }`}
+                      >
+                        {customer.status.charAt(0).toUpperCase() +
+                          customer.status.slice(1)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
