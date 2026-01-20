@@ -54,28 +54,24 @@ export default function Sidebar() {
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Image
+                      <img
                         src={link.icon}
-                        alt=""
+                        alt={link.name}
                         aria-hidden
-                        width={25}
-                        height={25}
                         className={clsx(
-                          "object-contain",
+                          "w-[25px] h-[25px] object-contain",
                           isActive && "filter brightness-0 invert"
                         )}
                       />
                       <span className="hidden lg:inline">{link.name}</span>
                     </div>
                     {link.hasArrow && (
-                      <Image
+                      <img
                         src="/icons/chevron-right.svg"
                         alt=""
                         aria-hidden
-                        width={16}
-                        height={16}
                         className={clsx(
-                          "hidden lg:block object-contain",
+                          "hidden lg:block w-4 h-4 object-contain",
                           isActive && "filter brightness-0 invert"
                         )}
                       />
