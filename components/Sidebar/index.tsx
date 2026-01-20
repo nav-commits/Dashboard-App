@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { sidebarLinks } from "@/lib/sidebarLinks";
-import Card from "./Card";
-import { projectManagers } from "@/lib/projectMangers";
-import Dropdown from "./Dropdown";
+import { sidebarLinks } from "@/lib/constants/sidebarLinks";
+import Card from "../Card";
+import { projectManagers } from "@/lib/data/projectMangers";
+import Dropdown from "../Dropdown";
 export default function Sidebar() {
   const pathname = usePathname();
   return (
@@ -59,8 +59,8 @@ export default function Sidebar() {
                         src={link.icon}
                         alt=""
                         aria-hidden
-                        width={24}
-                        height={24}
+                        width={25}
+                        height={25}
                         className={clsx(
                           "object-contain",
                           isActive && "filter brightness-0 invert"

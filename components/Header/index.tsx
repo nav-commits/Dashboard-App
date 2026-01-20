@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Search from "../components/Search";
+import Search from "../Search";
 
 const Header = () => {
   const [query, setQuery] = useState("");

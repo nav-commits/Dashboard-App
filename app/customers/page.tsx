@@ -6,9 +6,9 @@ import Image from "next/image";
 import Search from "@/components/Search";
 import Dropdown from "@/components/Dropdown";
 import { CustomerStat } from "@/types/customerStat";
-import { statusOptions } from "@/lib/status";
+import { statusOptions } from "@/lib/constants/status";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/services/firebase";
 import { Customer } from "@/types/customers";
 export default function Customers() {
   const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
