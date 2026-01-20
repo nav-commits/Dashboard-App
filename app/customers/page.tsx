@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Card from "@/components/Card";
 import Image from "next/image";
 import Search from "@/components/Search";
@@ -10,154 +10,162 @@ import { statusOptions } from "@/lib/constants/status";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/services/firebase";
 import { Customer } from "@/types/customers";
+import { useFetch } from "@/hooks/useFetch";
+
 export default function Customers() {
-  const [filteredStatus, setFilteredStatus] = useState<"active" | "inactive">(
-    "active"
-  );
+  // Filters & pagination
+  const [filteredStatus, setFilteredStatus] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [customerStats, setCustomerStats] = useState<CustomerStat[]>([]);
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [statsError, setStatsError] = useState<string | null>(null);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [customersLoading, setCustomersLoading] = useState(true);
-  const [customersError, setCustomersError] = useState<string | null>(null);
   const itemsPerPage = 8;
-  const totalPages = Math.ceil(customers.length / itemsPerPage);
 
-  // Get current page items
-  const currentItems = customers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Fetch customers
+  const fetchCustomers = useCallback(async () => {
+    const snapshot = await getDocs(collection(db, "customers"));
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Customer[];
+  }, []);
+  const customersState = useFetch(fetchCustomers);
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  // Fetch stats
+  const fetchStats = useCallback(async () => {
+    const snapshot = await getDocs(collection(db, "customerStats"));
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as CustomerStat[];
+    const order = ["Total Customers", "Members", "Active Now"];
+    return order.map((label) => data.find((stat) => stat.label === label)!);
+  }, []);
+  const statsState = useFetch(fetchStats);
+
+  // Filtered customers
+  const filteredData = useMemo(() => {
+    return (customersState.data ?? []).filter((item) => {
+      const statusMatch =
+        filteredStatus === "all" || item.status === filteredStatus;
+      const searchMatch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.country.toLowerCase().includes(searchQuery.toLowerCase());
+      return statusMatch && searchMatch;
+    });
+  }, [customersState.data, filteredStatus, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentItems = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(start, start + itemsPerPage);
+  }, [filteredData, currentPage]);
+
+  const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNext = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+  // Reset page when filter/search changes
+  const handleFilterChange = (id: "all" | "active" | "inactive") => {
+    setFilteredStatus(id);
+    setCurrentPage(1);
+  };
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
   };
 
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setStatsLoading(true);
-        const snapshot = await getDocs(collection(db, "customerStats")); 
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as CustomerStat[];
-        const order = ["Total Customers", "Members", "Active Now"];
-        const sortedData = order.map((label) => data.find((stat) => stat.label === label)!); 
-        setCustomerStats(sortedData);
-      } catch (err) {
-        console.error("Error fetching customer stats:", err);
-        setStatsError("Failed to load stats.");
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-    fetchStats();
-  }, []);
-  
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        setCustomersLoading(true);
-        const snapshot = await getDocs(collection(db, "customers"));
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Customer[];
-        setCustomers(data);
-      } catch (err) {
-        console.error(err);
-        setCustomersError("Failed to load customers");
-      } finally {
-        setCustomersLoading(false);
-      }
-    };
-
-    fetchCustomers();
-  }, []);
   return (
     <main className="p-6">
-      {/* Customer Stats */}
+      {/* Stats */}
       <Card
         bgClass="bg-white"
         className="m-3 p-6 shadow-xs"
         aria-label="Customer statistics"
       >
-        {statsLoading && <p className="text-gray-500">Loading stats...</p>}
-        {statsError && <p className="text-red-500">{statsError}</p>}
-        {!statsLoading && !statsError && customerStats.length === 0 && (
-          <p className="text-gray-400">No stats available</p>
+        {statsState.loading && (
+          <p className="text-gray-500">Loading stats...</p>
         )}
-        {!statsLoading && !statsError && customerStats.length > 0 && (
-          <div className="flex flex-col lg:flex-row">
-            {customerStats.map((stat) => (
-              <div
-                key={stat.id}
-                className="flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-3 px-4 py-4 text-center sm:text-left border-t border-gray-200 lg:border-t-0 lg:border-r lg:last:border-r-0"
-              >
-                <div className="flex-shrink-0">
-                  <Image
-                    src={stat.icon}
-                    alt={`${stat.label} icon`}
-                    width={84}
-                    height={84}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-[#ACACAC]">{stat.label}</p>
-                  {stat.number && (
-                    <p className="font-semibold text-2xl mb-1 break-words">
-                      {stat.number}
-                    </p>
-                  )}
-                  {stat.growth && (
-                    <div
-                      className={`flex flex-wrap items-center justify-center sm:justify-start gap-1 text-sm font-semibold ${
-                        stat.growthType === "up"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      <Image
-                        src={
+        {statsState.error && <p className="text-red-500">{statsState.error}</p>}
+        {!statsState.loading &&
+          !statsState.error &&
+          statsState.data?.length === 0 && (
+            <p className="text-gray-400">No stats available</p>
+          )}
+        {!statsState.loading &&
+          !statsState.error &&
+          (statsState.data?.length ?? 0) > 0 && (
+            <div className="flex flex-col lg:flex-row">
+              {statsState.data?.map((stat) => (
+                <div
+                  key={stat.id}
+                  className="flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-3 px-4 py-4 text-center sm:text-left border-t border-gray-200 lg:border-t-0 lg:border-r lg:last:border-r-0"
+                >
+                  <div className="flex-shrink-0">
+                    <Image
+                      src={stat.icon}
+                      alt={`${stat.label} icon`}
+                      width={84}
+                      height={84}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-[#ACACAC]">{stat.label}</p>
+                    {stat.number && (
+                      <p className="font-semibold text-2xl mb-1 break-words">
+                        {stat.number}
+                      </p>
+                    )}
+                    {stat.growth && (
+                      <div
+                        className={`flex flex-wrap items-center justify-center sm:justify-start gap-1 text-sm font-semibold ${
                           stat.growthType === "up"
-                            ? "/icons/arrow-up.svg"
-                            : "/icons/arrow-down.svg"
-                        }
-                        alt="growth icon"
-                        width={20}
-                        height={20}
-                      />
-                      <span>{stat.growth}</span>
-                      <span className="text-black font-normal">this month</span>
-                    </div>
-                  )}
-                  {stat.images && (
-                    <div className="flex justify-center sm:justify-start mt-2 -space-x-3">
-                      {stat.images.map((img, idx) => (
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      >
                         <Image
-                          key={idx}
-                          src={img}
-                          alt={`Customer ${idx + 1}`}
-                          width={32}
-                          height={32}
-                          className="rounded-full border border-white"
+                          src={
+                            stat.growthType === "up"
+                              ? "/icons/arrow-up.svg"
+                              : "/icons/arrow-down.svg"
+                          }
+                          alt="growth icon"
+                          width={20}
+                          height={20}
                         />
-                      ))}
-                    </div>
-                  )}
+                        <span>{stat.growth}</span>
+                        <span className="text-black font-normal">
+                          this month
+                        </span>
+                      </div>
+                    )}
+                    {stat.images && (
+                      <div className="flex justify-center sm:justify-start mt-2 -space-x-3">
+                        {stat.images.map((img, idx) => (
+                          <Image
+                            key={idx}
+                            src={img}
+                            alt={`Customer ${idx + 1}`}
+                            width={32}
+                            height={32}
+                            className="rounded-full border border-white"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
       </Card>
+
+      {/* Customers Table */}
       <Card className="m-3 p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
@@ -167,7 +175,7 @@ export default function Customers() {
           <div className="flex gap-3 items-center w-full sm:w-auto">
             <Search
               value={searchQuery}
-              onChange={(val) => setSearchQuery(val)}
+              onChange={handleSearchChange}
               bgClass="bg-gray-100"
             />
             <Dropdown
@@ -176,7 +184,7 @@ export default function Customers() {
               bgClass="bg-gray-100"
               initialSelectedId={filteredStatus}
               onSelect={(item) =>
-                setFilteredStatus(item.id as "active" | "inactive")
+                handleFilterChange(item.id as "all" | "active" | "inactive")
               }
             />
           </div>
@@ -196,7 +204,6 @@ export default function Customers() {
                 ].map((col) => (
                   <th
                     key={col}
-                    scope="col"
                     className="px-4 sm:px-6 py-4 text-left text-sm font-medium text-[#B5B7C0]"
                   >
                     {col}
@@ -205,18 +212,18 @@ export default function Customers() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {customersLoading ||
-              customersError ||
-              (!customersLoading && currentItems.length === 0) ? (
+              {customersState.loading ||
+              customersState.error ||
+              currentItems.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
                     className="px-6 py-8 text-center text-sm text-gray-400"
                   >
-                    {customersLoading
+                    {customersState.loading
                       ? "Loading customers..."
-                      : customersError
-                      ? customersError
+                      : customersState.error
+                      ? customersState.error
                       : "No customers found"}
                   </td>
                 </tr>
@@ -265,18 +272,19 @@ export default function Customers() {
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="inline-flex px-4 py-2 rounded-md border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="inline-flex px-4 py-2 rounded-md border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 ml-2"
             >
               Next
             </button>
           </div>
+
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <p className="text-sm text-[#B5B7C0]">
               Showing data{" "}
@@ -285,19 +293,19 @@ export default function Customers() {
               </span>{" "}
               to{" "}
               <span className="font-medium">
-                {Math.min(currentPage * itemsPerPage, customers.length)}
+                {Math.min(currentPage * itemsPerPage, filteredData.length)}
               </span>{" "}
-              of <span className="font-medium">{customers.length}</span> results
+              of <span className="font-medium">{filteredData.length}</span>{" "}
+              results
             </p>
             <nav
               aria-label="Pagination"
-              className="isolate inline-flex -space-x-px rounded-md shadow-xs"
+              className="inline-flex -space-x-px rounded-md"
             >
-              {/* Previous Button */}
               <button
                 onClick={handlePrev}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center rounded-md px-1.5 py-1.5 bg-[#EEEEEE] text-gray-600 hover:bg-gray-300 disabled:opacity-50 mr-2"
+                className="inline-flex items-center px-1.5 py-1.5 bg-[#EEEEEE] text-gray-600 hover:bg-gray-300 disabled:opacity-50 mr-2"
               >
                 <span className="sr-only">Previous</span>
                 <svg
@@ -312,26 +320,23 @@ export default function Customers() {
                   />
                 </svg>
               </button>
-              <div className="flex space-x-2">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`relative inline-flex items-center px-4 py-2 text-xs font-medium rounded-md ${
-                      currentPage === i + 1
-                        ? "z-10 bg-indigo-600 text-white"
-                        : "text-gray-900 bg-[#EEEEEE] hover:bg-[#EEEEEE]"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-              {/* Next Button */}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-4 py-2 text-xs font-medium rounded-md ${
+                    currentPage === i + 1
+                      ? "bg-indigo-600 text-white"
+                      : "bg-[#EEEEEE] text-gray-900"
+                  } ${i < totalPages - 1 ? "mr-2" : ""}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
               <button
                 onClick={handleNext}
                 disabled={currentPage === totalPages}
-                className="relative inline-flex items-center rounded-md px-1.5 py-1.5 bg-[#EEEEEE] text-gray-600 hover:bg-gray-300 disabled:opacity-50 ml-2"
+                className="inline-flex items-center px-1.5 py-1.5 bg-[#EEEEEE] text-gray-600 hover:bg-gray-300 disabled:opacity-50 ml-2"
               >
                 <span className="sr-only">Next</span>
                 <svg

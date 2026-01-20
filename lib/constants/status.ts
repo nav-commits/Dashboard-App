@@ -1,7 +1,9 @@
-import { StatusItem } from "@/types/dropdownStatus";
-  
-  export const statusOptions: StatusItem[] = [
-    { id: "active", value: "Newest" },
-    { id: "inactive", value: "Oldest" },
-  ];
-  
+interface StatusItem {
+  id: "all" | "active" | "inactive";
+  name: string; 
+}
+export const statusOptions: StatusItem[] = [
+  { id: "all", name: "All" },      
+  { id: "active", name: "Active" },
+  { id: "inactive", name: "Inactive" }, 
+];
