@@ -1,8 +1,8 @@
-// app/(dashboard)/layout.tsx
 import { Poppins } from "next/font/google";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import "../globals.css";
+import { ProtectedRoute } from "../../components/ProtecedRoute";
+import ".././globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -13,16 +13,14 @@ const poppins = Poppins({
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} antialiased flex min-h-screen`}>
-        {/* Sidebar */}
+    <ProtectedRoute>
+      <div className={`${poppins.variable} antialiased flex min-h-screen`}>
         <Sidebar />
-        {/* Main content */}
         <div className="flex-1 flex flex-col bg-[#FAFBFF]">
           <Header />
           <main className="flex-1 p-6">{children}</main>
         </div>
-      </body>
-    </html>
+      </div>
+    </ProtectedRoute>
   );
 }
