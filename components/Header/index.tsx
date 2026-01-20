@@ -2,36 +2,31 @@
 
 import { useState, useEffect } from "react";
 import Search from "../Search";
-import { getAuth, onAuthStateChanged, signOut, } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FiLogOut } from "react-icons/fi";
 
 const Header = () => {
   const [query, setQuery] = useState("");
   const [userName, setUserName] = useState<string | null>(null);
-
   const router = useRouter();
   const auth = getAuth();
 
   useEffect(() => {
-    // Subscribe to auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Use displayName if set, otherwise fallback to email username
         setUserName(user.displayName || user.email?.split("@")[0] || "User");
       } else {
         setUserName(null);
       }
     });
-
-    // Clean up the listener when component unmounts
     return () => unsubscribe();
   }, [auth]);
-console.log(auth) 
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push("/public"); // redirect after logout
+      router.push("/public");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -39,10 +34,7 @@ console.log(auth)
 
   return (
     <header className="flex flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
-      <h1 className="text-2xl font-medium">
-        Hello {userName || "User"} 👋🏼,
-      </h1>
-
+      <h1 className="text-2xl font-medium">Hello {userName || "User"} 👋🏼,</h1>
       <div className="flex items-center gap-4">
         <Search value={query} onChange={setQuery} />
         <button

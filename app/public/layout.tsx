@@ -1,5 +1,4 @@
 // app/(public)/layout.tsx
-import { ReactNode } from "react";
 import { Poppins } from "next/font/google";
 import "../globals.css";
 
@@ -10,10 +9,10 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export default function PublicLayout({ children }: { children: ReactNode }) {
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={`${poppins.variable} antialiased min-h-screen bg-white`}>
-      <main>{children}</main>
-    </div>
+        <main>{children}</main>
+      </div>
   );
 }
