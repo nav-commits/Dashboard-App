@@ -20,7 +20,7 @@ export default function Sidebar() {
       <div>
         <div className="flex justify-center lg:justify-start mb-6">
           <Image
-            src="/images/logo.png"
+            src="/Images/logo.png"
             alt="Company logo"
             width={195}
             height={39}
@@ -28,7 +28,7 @@ export default function Sidebar() {
             priority
           />
           <Image
-            src="/images/logo-2.png"
+            src="/Images/logo-2.png"
             alt="Company logo"
             width={32}
             height={32}
@@ -67,7 +67,7 @@ export default function Sidebar() {
                     </div>
                     {link.hasArrow && (
                       <img
-                        src="/icons/chevron-right.svg"
+                        src="/Icons/chevron-right.svg"
                         alt=""
                         aria-hidden
                         className={clsx(

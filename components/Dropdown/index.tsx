@@ -92,7 +92,7 @@ export default function Dropdown({
           )}
         >
           <Image
-            src="/icons/chevron-down.svg"
+            src="/Icons/chevron-down.svg"
             alt="arrow-down"
             fill
             className="object-contain"
