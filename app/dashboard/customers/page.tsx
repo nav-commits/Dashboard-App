@@ -131,8 +131,8 @@ export default function Customers() {
                         <Image
                           src={
                             stat.growthType === "up"
-                              ? "/icons/arrow-up.svg"
-                              : "/icons/arrow-down.svg"
+                              ? "/Icons/arrow-up.svg"
+                              : "/Icons/arrow-down.svg"
                           }
                           alt="growth icon"
                           width={20}

@@ -11,7 +11,7 @@ const Search = ({ value, onChange, bgClass = "bg-white" }: SearchProps) => {
         Search dashboard
       </label>
       <img
-        src="/icons/search.svg"
+        src="/Icons/search.svg"
         alt=""
         aria-hidden="true"
         className="w-[20px] h-[20px] mr-2 object-contain"
