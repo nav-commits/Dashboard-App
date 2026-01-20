@@ -17,7 +17,6 @@ export default function Sidebar() {
       )}
       aria-label="Sidebar"
     >
-      {/* Top section */}
       <div>
         <div className="flex justify-center lg:justify-start mb-6">
           <Image
