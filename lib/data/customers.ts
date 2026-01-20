@@ -1,15 +1,5 @@
 // lib/customers.ts
-
-export interface Customer {
-    id: string;
-    name: string;
-    company: string;
-    phone: string;
-    email: string;
-    country: string;
-    status: "active" | "inactive";
-  }
-  
+import { Customer } from "@/types/customers";
   // Mock customer data
   export const customers: Customer[] = [
     {
@@ -95,17 +85,7 @@ export interface Customer {
     },
   ];
   
-  // Type for dashboard card stats
-  export interface CustomerStat {
-    id: string;
-    icon: string;
-    label: string;
-    number?: string;
-    growth?: string;
-    growthType?: "up" | "down";
-    images?: string[];
-  }
-  
+import { CustomerStat } from "@/types/customerStat";
   // Mock data for dashboard cards
   export const customerStats: CustomerStat[] = [
     {

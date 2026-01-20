@@ -1,33 +1,13 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+// app/layout.tsx
+import { ReactNode } from "react";
+import { AuthProvider } from "../context/AuthContext";
 import "./globals.css";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Dashboard",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased flex min-h-screen `}>
-        <Sidebar />
-        <div className="flex-1 flex flex-col bg-[#FAFBFF]">
-          <Header />
-          <main className=" flex-1">{children}</main>
-        </div>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
