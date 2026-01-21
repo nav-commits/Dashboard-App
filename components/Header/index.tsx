@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Search from "../Search";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FiLogOut } from "react-icons/fi";
+import InputField from "../InputField";
 
 const Header = () => {
   const [query, setQuery] = useState("");
@@ -36,12 +36,15 @@ const Header = () => {
     <header className="flex flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
       <h1 className="text-2xl font-medium">Hello {userName || "User"} 👋🏼,</h1>
       <div className="flex items-center gap-4">
-        <Search value={query} onChange={setQuery} />
-        <button
-          onClick={handleLogout}
-          className="p-2 rounded-full hover:bg-gray-200 transition"
-          title="Logout"
-        >
+        <InputField
+          value={query}
+          onChange={setQuery}
+          placeholder="Search"
+          type="search"
+          icon={<img src="/Icons/search.svg" className="w-5 h-5" />}
+          bgClass="bg-gray-100"
+        />
+        <button onClick={handleLogout} className="p-2" aria-label="Logout">
           <FiLogOut className="text-gray-600 w-6 h-6" />
         </button>
       </div>

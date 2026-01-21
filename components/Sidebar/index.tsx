@@ -7,17 +7,22 @@ import { sidebarLinks } from "@/lib/constants/sidebarLinks";
 import Card from "../Card";
 import { projectManagers } from "@/lib/data/projectMangers";
 import Dropdown from "../Dropdown";
+import Button from "../Button";
+
 export default function Sidebar() {
   const pathname = usePathname();
+
   return (
     <aside
       className={clsx(
-        "h-screen p-6 flex flex-col justify-between transition-all duration-300",
-        "w-25 lg:w-[306px]"
+        "flex flex-col justify-between transition-all duration-300 min-h-screen",
+        "w-20 sm:w-24 lg:w-[306px] p-4 sm:p-6"
       )}
       aria-label="Sidebar"
     >
+      {/* Top section */}
       <div>
+        {/* Logo */}
         <div className="flex justify-center lg:justify-start mb-6">
           <Image
             src="/Images/logo.png"
@@ -36,6 +41,7 @@ export default function Sidebar() {
             priority
           />
         </div>
+
         {/* Navigation */}
         <nav aria-label="Main navigation" className="mt-6">
           <ul className="flex flex-col gap-3">
@@ -83,28 +89,31 @@ export default function Sidebar() {
           </ul>
         </nav>
       </div>
+
       {/* Bottom section */}
-      <div>
+      <div className="mt-auto">
         {/* Desktop only */}
-        <div className="hidden lg:block">
-          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9] p-6 mt-6 mb-6">
+        <div className="hidden lg:flex flex-col gap-4">
+          <Card bgClass="bg-gradient-to-br from-[#EAABF0] to-[#4623E9] p-6">
             <p className="text-center text-sm text-white font-semibold p-2">
               Upgrade to PRO to get access to all features!
             </p>
-            <button
-              type="button"
-              className="bg-white text-[#5932EA] text-sm rounded-2xl px-10 py-2 font-semibold hover:bg-gray-100 transition"
-            >
-              Get Pro Now
-            </button>
+            <Button
+              text="Get Pro Now"
+              textColor="#5932EA"
+              bgColor="#FFFFFF"
+              className="hover:bg-gray-100 transition"
+            />
           </Card>
+
           <Dropdown
             items={projectManagers}
             initialSelectedId={projectManagers[0].id}
             onSelect={(item) => console.log("Selected PM:", item)}
           />
         </div>
-        {/* Mobile / Tablet → avatar only */}
+
+        {/* Mobile avatar */}
         <div className="flex justify-center lg:hidden mt-4">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">
             <Image
