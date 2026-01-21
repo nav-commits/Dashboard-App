@@ -29,7 +29,7 @@ export default function Home() {
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      router.push("/dashboard");
+      router.push("/dashboard/customers");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
