@@ -52,7 +52,7 @@ export default function Home() {
             value={email}
             onChange={setEmail}
             placeholder="Enter your email"
-            bgClass="bg-white"
+            bgClass="bg-gray-100"
           />
           <InputField
             label="Password"
@@ -60,7 +60,7 @@ export default function Home() {
             value={password}
             onChange={setPassword}
             placeholder="Enter your password"
-            bgClass="bg-white"
+            bgClass="bg-gray-100"
           />
           <Button
             type="submit"
