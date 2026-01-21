@@ -89,7 +89,6 @@ export default function Sidebar() {
           </ul>
         </nav>
       </div>
-
       {/* Bottom section */}
       <div className="mt-auto">
         {/* Desktop only */}
@@ -112,7 +111,6 @@ export default function Sidebar() {
             onSelect={(item) => console.log("Selected PM:", item)}
           />
         </div>
-
         {/* Mobile avatar */}
         <div className="flex justify-center lg:hidden mt-4">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">

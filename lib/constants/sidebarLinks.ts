@@ -1,6 +1,5 @@
 
-import { SidebarLink } from "@/types/sidebarLinks";
- 
+import { SidebarLink } from "@/types/sidebarLinks"; 
   export const sidebarLinks: SidebarLink[] = [
     { name: "Dashboard", href: "/dashboard", icon: "/Icons/key-square.svg", hasArrow: false },
     { name: "Product", href: "/dashboard/product", icon: "/Icons/3d-square.svg", hasArrow: true },
