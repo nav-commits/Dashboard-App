@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from "react";
 import Card from "@/components/Card";
 import Image from "next/image";
-import Search from "@/components/Search";
 import Dropdown from "@/components/Dropdown";
 import { CustomerStat } from "@/types/customerStat";
 import { statusOptions } from "@/lib/constants/status";
@@ -11,6 +10,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/services/firebase";
 import { Customer } from "@/types/customers";
 import { useFetch } from "@/hooks/useFetch";
+import InputField from "@/components/InputField";
 
 export default function Customers() {
   // Filters & pagination
@@ -172,10 +172,13 @@ export default function Customers() {
             <h3 className="text-md text-[#16C098]">Active Members</h3>
           </div>
           <div className="flex gap-3 items-center w-full sm:w-auto">
-            <Search
+            <InputField
               value={searchQuery}
               onChange={handleSearchChange}
+              placeholder="Search"
               bgClass="bg-gray-100"
+              type="search"
+              icon={<img src="/Icons/search.svg" className="w-5 h-5" />}
             />
             <Dropdown
               placeholder="Sort by:"

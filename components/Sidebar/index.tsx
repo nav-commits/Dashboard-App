@@ -7,6 +7,7 @@ import { sidebarLinks } from "@/lib/constants/sidebarLinks";
 import Card from "../Card";
 import { projectManagers } from "@/lib/data/projectMangers";
 import Dropdown from "../Dropdown";
+import Button from "../Button";
 export default function Sidebar() {
   const pathname = usePathname();
   return (
@@ -91,12 +92,12 @@ export default function Sidebar() {
             <p className="text-center text-sm text-white font-semibold p-2">
               Upgrade to PRO to get access to all features!
             </p>
-            <button
-              type="button"
-              className="bg-white text-[#5932EA] text-sm rounded-2xl px-10 py-2 font-semibold hover:bg-gray-100 transition"
-            >
-              Get Pro Now
-            </button>
+            <Button
+              text="Get Pro Now"
+              textColor="#5932EA"
+              bgColor="#FFFFFF"
+              className="hover:bg-gray-100 transition"
+            />
           </Card>
           <Dropdown
             items={projectManagers}
@@ -104,7 +105,6 @@ export default function Sidebar() {
             onSelect={(item) => console.log("Selected PM:", item)}
           />
         </div>
-        {/* Mobile / Tablet → avatar only */}
         <div className="flex justify-center lg:hidden mt-4">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">
             <Image
