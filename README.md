@@ -3,6 +3,8 @@
 A modern, responsive dashboard for tracking customers and business data, built with **Next.js**, **React**, **TypeScript**, and **Tailwind CSS**.  
 Designed for a clean UI, reusable components, and a scalable structure.
 
+Website url: https://dashly.ca/public
+
 <img width="1301" height="1081" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/5fc3978f-50b8-4556-8d82-18f8854bbe46" />
 
 ---
