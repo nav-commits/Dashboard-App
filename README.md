@@ -1,4 +1,4 @@
-# Dashboard App
+# 🚀 CRM Dashboard – Customer List App
 
 A modern, responsive dashboard for tracking customers and business data, built with **Next.js**, **React**, **TypeScript**, and **Tailwind CSS**.  
 Designed for a clean UI, reusable components, and a scalable structure.
