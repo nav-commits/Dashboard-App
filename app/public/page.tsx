@@ -16,13 +16,31 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const auth = getAuth();
 
+  const validateForm = () => {
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email");
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+    if (!validateForm()) return;
+    setLoading(true);
     try {
       if (isRegister) {
         await createUserWithEmailAndPassword(auth, email, password);
@@ -36,8 +54,11 @@ export default function Home() {
       } else {
         setError("An unexpected error occurred");
       }
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <Card bgClass="bg-white p-8 shadow-md" className="w-full max-w-md m-4">
@@ -64,10 +85,11 @@ export default function Home() {
           />
           <Button
             type="submit"
-            text={isRegister ? "Register" : "Login"}
+            text={loading ? "Please wait..." : isRegister ? "Register" : "Login"}
             textColor="#FFFFFF"
             bgColor="#5932EA"
-            className="w-full hover:bg-indigo-700 transition"
+            className={`w-full transition ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"}`}
+            disabled={loading}
           />
         </form>
         <p className="mt-4 text-center text-gray-600 text-sm">
