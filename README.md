@@ -5,7 +5,7 @@ Designed for a clean UI, reusable components, and a scalable structure.
 
 Website url: https://dashly.ca/public
 
-<img width="1301" height="1081" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/5fc3978f-50b8-4556-8d82-18f8854bbe46" />
+<img width="1670" height="1176" alt="Screenshot 2026-01-22 at 4 13 16 PM" src="https://github.com/user-attachments/assets/2687d5c9-74e0-4821-88b5-ed9b9b534020" />
 
 ---
 
